@@ -1,9 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
+
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
 )
 
 func main() {
@@ -17,9 +19,25 @@ func main() {
 	}
 	defer conn.Close()
 
-	n, err := fmt.Fprintf(conn, "something")
+	// n, err := fmt.Fprintf(conn, "something")
+	// if err != nil {
+	// 	log.Fatalf("Unable to write %v to server: %v", n, err)
+	// }
+	// fmt.Printf("Wrote %v to server\n", n)
+
+	buf := gopacket.NewSerializeBuffer()
+	opts := gopacket.SerializeOptions{}
+	gopacket.SerializeLayers(buf, opts,
+		&layers.Ethernet{},
+		&layers.IPv4{
+			SrcIP: net.IP{1, 2, 3, 4},
+			DstIP: net.IP{5, 6, 7, 8}},
+		&layers.UDP{
+			DstPort: layers.UDPPort(8888),
+		})
+	w, err := conn.Write(buf.Bytes())
 	if err != nil {
-		log.Fatalf("Unable to write %v to server: %v", n, err)
+		log.Fatalf("Unable to write to server: %v", err)
 	}
-	fmt.Printf("Wrote %v to server\n", n)
+	log.Printf("Sent %v to server", w)
 }
