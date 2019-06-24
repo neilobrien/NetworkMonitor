@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	fmt.Println("Starting UDP Server...")
+	fmt.Println("Starting UDP Server on 8888...")
 	server(context.Background(), "127.0.0.1:8888")
 
 }
