@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 
-	"github.com/simplesteph/grpc-go-course/greet/greetpb"
+	"github.com/neilobrien/NetworkMonitor/greetpb"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
