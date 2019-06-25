@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package nm_probes;
+
+option go_package="probepb";
+
+message Hello {
+    string first_name = 1;
+    string last_name = 2;
+}
+
+message HelloRequest {
+    Hello hello = 1;
+}
+
+message HelloResponse {
+    string result = 1;
+}
+
+service HelloService{
+    // Unary
+    rpc Hello(HelloRequest) returns (HelloResponse) {};
+
+
+}

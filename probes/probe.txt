@@ -1,0 +1,33 @@
+version: 1
+probes: <
+  probeID: 411001
+  ipVer: 4
+  probeType: "UDP"
+  targetAddress: "1.1.1.1"
+  numPackets: 120
+  interval: 500
+>
+probes: <
+  probeID: 411002
+  ipVer: 4
+  probeType: "UDP"
+  targetAddress: "2.2.2.2"
+  numPackets: 120
+  interval: 500
+>
+probes: <
+  probeID: 411003
+  ipVer: 4
+  probeType: "UDP"
+  targetAddress: "3.3.3.3"
+  numPackets: 120
+  interval: 500
+>
+probes: <
+  probeID: 411004
+  ipVer: 4
+  probeType: "UDP"
+  targetAddress: "4.4.4.4"
+  numPackets: 120
+  interval: 500
+>

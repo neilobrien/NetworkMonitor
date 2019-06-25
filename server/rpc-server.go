@@ -6,20 +6,18 @@ import (
 	"log"
 	"net"
 
-	"google.golang.org/grpc/credentials"
-
-	"github.com/neilobrien/NetworkMonitor/greet"
-
+	ppb "github.com/neilobrien/NetworkMonitor/protos"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type server struct{}
 
-func (*server) Greet(ctx context.Context, req *greet.GreetRequest) (*greet.GreetResponse, error) {
+func (*server) Hello(ctx context.Context, req *ppb.HelloRequest) (*ppb.HelloResponse, error) {
 	fmt.Printf("Greet function was invoked with %v\n", req)
-	firstName := req.GetGreeting().GetFirstName()
+	firstName := req.GetHello().GetFirstName()
 	result := "Hello " + firstName
-	res := &greet.GreetResponse{
+	res := &ppb.HelloResponse{
 		Result: result,
 	}
 	return res, nil
@@ -30,12 +28,13 @@ const serverIP = "0.0.0.0"
 const serverProtocol = "tcp"
 
 func main() {
+
 	lis, err := net.Listen(serverProtocol, serverIP+serverPort)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	fmt.Printf("Listening on %v%v...\n", serverIP, serverPort)
+	fmt.Printf("Listening on %v%v", serverIP, serverPort)
 
 	opts := []grpc.ServerOption{}
 	tls := false
@@ -51,7 +50,7 @@ func main() {
 	}
 
 	s := grpc.NewServer(opts...)
-	greet.RegisterGreetServiceServer(s, &server{})
+	ppb.RegisterHelloServiceServer(s, &server{})
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
