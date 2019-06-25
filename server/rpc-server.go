@@ -14,7 +14,7 @@ import (
 type server struct{}
 
 func (*server) Hello(ctx context.Context, req *ppb.HelloRequest) (*ppb.HelloResponse, error) {
-	fmt.Printf("Greet function was invoked with %v\n", req)
+	fmt.Printf("Hello function was invoked with %v\n", req)
 	firstName := req.GetHello().GetFirstName()
 	result := "Hello " + firstName
 	res := &ppb.HelloResponse{
@@ -34,7 +34,7 @@ func main() {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	fmt.Printf("Listening on %v%v", serverIP, serverPort)
+	fmt.Printf("Listening on %v%v...\n", serverIP, serverPort)
 
 	opts := []grpc.ServerOption{}
 	tls := false
