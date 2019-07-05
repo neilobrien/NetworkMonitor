@@ -70,7 +70,7 @@ func fromFile(fname string, pb proto.Message) {
 }
 
 func main() {
-	p := &ppb.CommonProbes{}
+	// p := &ppb.CommonProbes{}
 	go fromFile(strings.Join([]string{fpath, fname}, "/"), p)
 
 	fmt.Printf("Version: %v\n", p.GetVersion())
