@@ -3,15 +3,27 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
+	"strings"
+	"time"
 
+	"github.com/golang/protobuf/proto"
 	ppb "github.com/neilobrien/NetworkMonitor/protos"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
 
 type server struct{}
+
+const (
+	serverIP       = "0.0.0.0"
+	serverPort     = ":50051"
+	serverProtocol = "tcp"
+	fpath          = "../probes"
+	fname          = "probe.txt"
+)
 
 func (*server) Hello(ctx context.Context, req *ppb.HelloRequest) (*ppb.HelloResponse, error) {
 	fmt.Printf("Hello function was invoked with %v\n", req)
@@ -23,11 +35,46 @@ func (*server) Hello(ctx context.Context, req *ppb.HelloRequest) (*ppb.HelloResp
 	return res, nil
 }
 
-const serverPort = ":50051"
-const serverIP = "0.0.0.0"
-const serverProtocol = "tcp"
+var p = &ppb.CommonProbes{}
+
+func (*server) GetProbesVersion(ctx context.Context, req *ppb.VersionRequest) (*ppb.CommonProbes, error) {
+	fmt.Printf("Returning Version\n")
+	res := &ppb.CommonProbes{
+		Version: p.GetVersion(),
+	}
+	return res, nil
+}
+
+func fromFile(fname string, pb proto.Message) {
+	i := 0
+	for {
+		i++
+		fmt.Println("test")
+		in, err := ioutil.ReadFile(fname)
+		if err != nil {
+			log.Fatalf("Can't read file: %v", err)
+		}
+		// err = proto.MarshalText(myFile, pb)
+
+		fmt.Println("debugging...")
+		fmt.Println(string(in))
+
+		err = proto.UnmarshalText(string(in), pb)
+		if err != nil {
+			log.Fatalf("Can't read from file: %v", err)
+		}
+		fmt.Printf("Sleep...%d\n", i)
+		time.Sleep(5 * time.Second)
+		fmt.Println("Awake...")
+	}
+}
 
 func main() {
+	// p := &ppb.CommonProbes{}
+	go fromFile(strings.Join([]string{fpath, fname}, "/"), p)
+
+	fmt.Printf("Version: %v\n", p.GetVersion())
+	fmt.Println("reading probes....")
 
 	lis, err := net.Listen(serverProtocol, serverIP+serverPort)
 	if err != nil {

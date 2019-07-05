@@ -51,12 +51,23 @@ func main() {
 	// fmt.Printf("Created client: %f", c)
 
 	doUnary(c)
+	getVersion(c)
 	// doServerStreaming(c)
 	// doClientStreaming(c)
 	// doBiDiStreaming(c)
 
 	// doUnaryWithDeadline(c, 5*time.Second) // should complete
 	// doUnaryWithDeadline(c, 1*time.Second) // should timeout
+}
+
+func getVersion(c ppb.HelloServiceClient) {
+	fmt.Println("Requesting Version...")
+	req := &ppb.VersionRequest{}
+	res, err := c.GetProbesVersion(context.Background(), req)
+	if err != nil {
+		log.Fatalf("error while calling GetProbesVersion RPC: %v", err)
+	}
+	log.Printf("Received Version %v", res.Version)
 }
 
 func doUnary(c ppb.HelloServiceClient) {

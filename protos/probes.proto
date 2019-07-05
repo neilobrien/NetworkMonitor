@@ -9,6 +9,8 @@ message Hello {
     string last_name = 2;
 }
 
+message VersionRequest {}
+
 message HelloRequest {
     Hello hello = 1;
 }
@@ -17,9 +19,24 @@ message HelloResponse {
     string result = 1;
 }
 
+message CommonProbes {
+    int32 version = 1;
+    repeated Probe probes = 2;
+  }
+
+  message Probe {
+    int32 probeID = 1;
+    int32 ipVer = 2;
+    string probeType = 3;
+    string targetAddress = 4;
+    int32 numPackets = 5;
+    int32 interval = 6;
+  }
+
 service HelloService{
     // Unary
     rpc Hello(HelloRequest) returns (HelloResponse) {};
+    rpc GetProbesVersion(VersionRequest) returns (CommonProbes) {};
 
 
 }
