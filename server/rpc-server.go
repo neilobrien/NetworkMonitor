@@ -49,13 +49,10 @@ func fromFile(fname string, pb proto.Message) {
 	i := 0
 	for {
 		i++
-		fmt.Println("test")
 		in, err := ioutil.ReadFile(fname)
 		if err != nil {
 			log.Fatalf("Can't read file: %v", err)
 		}
-		// err = proto.MarshalText(myFile, pb)
-
 		fmt.Println("debugging...")
 		fmt.Println(string(in))
 

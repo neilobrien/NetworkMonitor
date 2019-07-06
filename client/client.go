@@ -4,18 +4,30 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"strings"
+	"time"
 
 	"google.golang.org/grpc/credentials"
 
+	"github.com/golang/protobuf/proto"
 	ppb "github.com/neilobrien/NetworkMonitor/protos"
 
 	"google.golang.org/grpc"
 )
 
-var serverIP = "35.246.29.114"
-var serverPort = ":50051"
-var serverProtocol = "tcp"
+var (
+	serverIP = "35.246.29.114"
+	p        = &ppb.CommonProbes{}
+)
+
+const (
+	serverPort     = ":50051"
+	serverProtocol = "tcp"
+	fpath          = "probes"
+	fname          = "client_probe.txt"
+)
 
 func main() {
 	gRPCTarget := flag.Bool("local", false, "gRPC Target")
@@ -58,6 +70,8 @@ func main() {
 
 	// doUnaryWithDeadline(c, 5*time.Second) // should complete
 	// doUnaryWithDeadline(c, 1*time.Second) // should timeout
+	go fromFile(strings.Join([]string{fpath, fname}, "/"), p)
+	time.Sleep(60 * time.Second)
 }
 
 func getVersion(c ppb.HelloServiceClient) {
@@ -83,4 +97,27 @@ func doUnary(c ppb.HelloServiceClient) {
 		log.Fatalf("error while calling Greet RPC: %v", err)
 	}
 	log.Printf("Response from Greet: %v", res.Result)
+}
+
+func fromFile(fname string, pb proto.Message) {
+	fmt.Println("Reading client probes...")
+	i := 0
+	for {
+		i++
+		in, err := ioutil.ReadFile(fname)
+		if err != nil {
+			log.Fatalf("Can't read file: %v", err)
+		}
+		// fmt.Println("debugging...")
+		// fmt.Println(string(in))
+
+		err = proto.UnmarshalText(string(in), pb)
+		if err != nil {
+			log.Fatalf("Can't read from file: %v", err)
+		}
+		fmt.Printf("Client Version: %v\n", p.GetVersion())
+		fmt.Printf("Sleep...%d\n", i)
+		time.Sleep(5 * time.Second)
+		fmt.Println("Awake...")
+	}
 }
